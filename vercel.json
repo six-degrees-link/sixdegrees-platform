@@ -1,6 +1,5 @@
 {
-  "buildCommand": "npx turbo run build --filter=@sixdegrees/web",
+  "buildCommand": "node_modules/.bin/turbo run build --filter=@sixdegrees/web",
   "outputDirectory": "apps/web/.next",
-  "installCommand": "npm install",
-  "framework": "nextjs"
+  "installCommand": "npm install"
 }
