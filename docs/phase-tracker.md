@@ -11,26 +11,25 @@ Upload this file at the start of each new phase conversation. Update the DONE an
 - Community can submit, vote on, and discuss requirements
 - Claude AI refines raw input into structured user stories
 - Coverage dashboards across all 11 personas
-- Tech: Next.js 14, TypeScript, Tailwind, Supabase, Vercel
+- Tech: Next.js 16, TypeScript, Tailwind, Supabase, Vercel
 
-### Phase 1: Foundation and Scaffolding (IN PROGRESS)
-<!-- Move items from ACTIVE to here as they are completed -->
+### Phase 1, Cycle 1 — Completed items
+- [x] Initialize Next.js 16 monorepo with TypeScript strict mode (Turborepo, apps/web, packages/ui|types|utils)
+- [x] Configure Tailwind CSS with design system tokens (Tailwind v4, full brand/semantic/neutral/surface token set, dark mode)
+- [x] Set up Vercel deployment pipeline with preview environments (vercel.json, outputDirectory, local turbo)
+- [x] Create shared UI component library foundation (packages/ui scaffolded)
 
 ---
 
 ## ACTIVE (current phase tasks - update as you work)
 
-### Phase 1, Cycle 1 (Apr 5-18): Project Setup
-- [ ] Initialize Next.js 14 monorepo with TypeScript strict mode
-- [ ] Configure Tailwind CSS with design system tokens
+### Phase 1, Cycle 1 (Apr 5-18): Project Setup — remaining
 - [ ] Set up Supabase project and configure connection
 - [ ] Configure ESLint, Prettier, and Husky pre-commit hooks
-- [ ] Set up Vercel deployment pipeline with preview environments
 - [ ] Create CI/CD pipeline with GitHub Actions
 - [ ] Design and implement core database schema - users and auth
 - [ ] Design and implement database schema - profiles and credentials
 - [ ] Set up Supabase Auth with magic link and OAuth providers
-- [ ] Create shared UI component library foundation
 - [ ] Set up Zod validation schemas for all data models
 - [ ] Implement responsive navigation shell and layout system
 

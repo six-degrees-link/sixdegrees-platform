@@ -1,2 +1,2 @@
 // @sixdegrees/types — shared TypeScript types and Zod schemas
-export {}
+export type { Database, Json } from './database'

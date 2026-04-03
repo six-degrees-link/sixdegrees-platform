@@ -1,25 +1,77 @@
 # SixDegrees — Build Progress
 
-**Last updated**: 2026-04-02
-**Current milestone**: M5 complete
-**Live at**: https://sixdegrees.link
-**Repo**: https://github.com/six-degrees-link/sixdegrees
+**Last updated**: 2026-04-03
+**Current phase**: Platform Build — Phase 1, Cycle 1 (in progress)
+**Requirements site**: https://sixdegrees.link (live, M5 complete)
+**Platform repo**: https://github.com/six-degrees-link/sixdegrees-platform
 
 ---
 
-## Milestone Status
+## Platform Build Phase Status
 
-| # | Name | Target | Status |
-|---|------|--------|--------|
-| M1 | Foundation & Setup | Apr 13 | ✅ Complete |
-| M2 | Requirements Website Live | Apr 27 | ✅ Complete |
-| M3 | AI-Powered Refinement | May 11 | ✅ Complete |
-| M4 | Community Review (Admin Moderation) | May 25 | ✅ Complete |
-| M5 | Consolidation & Export | Jun 30 | ✅ Complete |
+| Phase | Name | Target | Status |
+|-------|------|--------|--------|
+| P1-C1 | Project Setup | Apr 18 | 🔄 In Progress |
+| P1-C2 | Foundation Hardening | May 2 | ⏳ Upcoming |
+| P2 | Identity and Profiles | May 30 | ⏳ Upcoming |
+| P3 | Networking and Communication | Jul 25 | ⏳ Upcoming |
+| P4 | Content and Discovery | Sep 19 | ⏳ Upcoming |
+| P5 | Professional Features | Nov 14 | ⏳ Upcoming |
+| P6 | Polish, Security and MVP Launch | Dec 19 | ⏳ Upcoming |
 
 ---
 
-## What's Built
+## Requirements Gathering Site — Milestone Status (COMPLETE)
+
+| # | Name | Status |
+|---|------|--------|
+| M1 | Foundation & Setup | ✅ Complete |
+| M2 | Requirements Website Live | ✅ Complete |
+| M3 | AI-Powered Refinement | ✅ Complete |
+| M4 | Community Review (Admin Moderation) | ✅ Complete |
+| M5 | Consolidation & Export | ✅ Complete |
+
+---
+
+## Platform Build — What's Built
+
+### P1-C1 — Project Setup (in progress)
+
+**Monorepo scaffold**
+- Turborepo monorepo at `sixdegrees-platform`
+- `apps/web` — Next.js 16 App Router (TypeScript strict)
+- `packages/ui` — shared React components (scaffolded, empty)
+- `packages/types` — shared Zod schemas and TypeScript types (scaffolded, empty)
+- `packages/utils` — shared utilities (scaffolded, empty)
+- Root `turbo.json` with `build`, `dev`, `lint`, `test`, `type-check` task graph
+- `packageManager: npm@11.12.1`, `engines: node >=20`
+
+**Design system**
+- Tailwind v4 (CSS-first, `@theme` block in `globals.css`)
+- Inter Variable via `next/font/google` — injected as `--font-inter` CSS variable
+- Full brand token set: `--color-brand-primary/light/dark`, `--color-brand-accent/light/dark`
+- Semantic colors: success, warning, error, info
+- Warm gray neutral palette: `neutral-50` through `neutral-900`
+- Typography scale: `xs` through `4xl`, font weights regular/medium/semibold/bold
+- Surface tokens with automatic dark mode via `@media (prefers-color-scheme: dark)`
+- `--surface-page/raised/overlay/sunken`, `--text-primary/secondary/tertiary/link`, `--border-default/strong/focus`, `--interactive-primary/accent`
+
+**Deployment**
+- `vercel.json` — `outputDirectory: apps/web/.next`, uses local `./node_modules/.bin/turbo`
+- `postcss.config.js` (CJS) — `@tailwindcss/postcss` plugin
+
+**Pending (P1-C1)**
+- Supabase project setup and connection
+- ESLint + Husky pre-commit hooks
+- CI/CD via GitHub Actions
+- Core DB schema — users, auth, profiles, credentials
+- Supabase Auth (magic link + OAuth)
+- Zod validation schemas in `packages/types`
+- Navigation shell and layout system
+
+---
+
+## Requirements Gathering Site — What's Built
 
 ### M1 — Foundation
 
@@ -129,7 +181,28 @@ Categories covered: jobs, verification, content, messaging, analytics, microsite
 
 ---
 
-## Architecture Decisions & Lessons Learned
+## Platform File Map (current state)
+
+```
+apps/
+  web/
+    app/
+      layout.tsx            ✅ Root layout — Inter Variable, globals.css
+      page.tsx              🔄 Placeholder "Coming soon"
+      globals.css           ✅ Tailwind v4 @theme tokens + dark mode surface tokens
+    tailwind.config.ts      ✅ Tailwind v4 config (content paths only, tokens in CSS)
+    package.json            ✅ Next.js 16, tailwindcss v4, @sixdegrees/* workspace deps
+packages/
+  ui/src/index.ts           🔄 Scaffolded, empty
+  types/src/index.ts        🔄 Scaffolded, empty
+  utils/src/index.ts        🔄 Scaffolded, empty
+turbo.json                  ✅ Task graph — build, dev, lint, test, type-check
+vercel.json                 ✅ outputDirectory + local turbo binary
+```
+
+---
+
+## Requirements Site — Architecture Decisions & Lessons Learned
 
 ### Service client must use `@supabase/supabase-js` directly
 
@@ -201,7 +274,7 @@ const updated = rows?.[0]
 
 ---
 
-## File Map (current state)
+## Requirements Site — File Map
 
 ```
 app/
