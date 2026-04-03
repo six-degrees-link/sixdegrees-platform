@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "plugins": [{ "name": "next" }],
+    "paths": {
+      "@/*": ["./*"],
+      "@sixdegrees/ui": ["../../packages/ui/src/index.ts"],
+      "@sixdegrees/types": ["../../packages/types/src/index.ts"],
+      "@sixdegrees/utils": ["../../packages/utils/src/index.ts"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
