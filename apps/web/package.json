@@ -13,9 +13,11 @@
     "@sixdegrees/types": "*",
     "@sixdegrees/ui": "*",
     "@sixdegrees/utils": "*",
+    "@tailwindcss/postcss": "^4.2.2",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
     "@types/node": "latest",
