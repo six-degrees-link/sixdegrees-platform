@@ -1,7 +1,7 @@
 # SixDegrees — Build Progress
 
-**Last updated**: 2026-04-03 (Vercel deployment config + health check)
-**Current phase**: Platform Build — Phase 1, Cycle 1 (in progress)
+**Last updated**: 2026-04-03 (core users/auth DB schema + Zod types)
+**Current phase**: Platform Build — Phase 1, Cycle 2 (in progress)
 **Requirements site**: https://sixdegrees.link (live, M5 complete)
 **Platform repo**: https://github.com/six-degrees-link/sixdegrees-platform
 
@@ -89,11 +89,19 @@
 - `app/api/health/route.ts` — `GET /api/health` returns `{ status, timestamp, version }`
 - `.env.production.example` — all required env vars documented (Supabase, app URL, Resend, Anthropic, admin emails)
 
+**Core DB schema — Users and Auth** (SIX-53)
+- `supabase/migrations/001_users_and_auth.sql` — applied to Supabase
+- `public.users` table — 19 columns: id (FK → auth.users), email, handle (regex-validated 3-30 chars), display_name, avatar_url, cover_image_url, headline (max 200), bio (max 2000), location, website, persona_type (11 values), verification_status (4 values), profile_completeness (0-100), role (user/moderator/admin), is_active, last_active_at, timestamps, search_vector (tsvector)
+- `public.user_settings` table — 7 columns: user_id (FK → users), profile_visibility (public/connections_only/private), email_digest (immediate/daily/weekly/off), show_activity, search_indexable, timestamps
+- 7 CHECK constraints: handle format, headline/bio length, persona_type/verification_status/role enums, completeness range
+- 7 indexes: PK, email UNIQUE, handle UNIQUE, persona_type, verification_status, created_at DESC, GIN on search_vector
+- 4 triggers: `set_updated_at` (both tables), `users_search_vector_update` (tsvector maintenance via trigger — `GENERATED ALWAYS` not viable because `to_tsvector` is not immutable), `handle_new_user` on `auth.users` (SECURITY DEFINER — auto-creates profile + settings on signup)
+- 6 RLS policies: SELECT visible profiles, UPDATE own profile, INSERT own profile, SELECT/UPDATE/INSERT own settings
+- Zod schemas in `packages/types/src/users.ts` — 5 enum schemas, 5 table schemas (including insert/update variants), all TypeScript types inferred via `z.infer<>`
+
 **Pending**
 - CI/CD via GitHub Actions
-- Core DB schema — users, auth, profiles, credentials
 - Supabase Auth (magic link + OAuth)
-- Zod validation schemas in `packages/types`
 - Navigation shell and layout system
 
 ---
@@ -109,6 +117,10 @@ Next.js 16 renames `middleware.ts` to `proxy.ts`. The exported function must als
 export async function proxy(request: NextRequest) { ... }  // correct
 export async function middleware(request: NextRequest) { ... }  // breaks build
 ```
+
+### tsvector columns cannot use `GENERATED ALWAYS` with language-aware functions
+
+`to_tsvector('english', ...)` is not immutable (the dictionary can change), so PostgreSQL rejects it in a `GENERATED ALWAYS AS (...) STORED` column. Use a `BEFORE INSERT OR UPDATE` trigger instead to maintain the `search_vector` column.
 
 ---
 
@@ -249,7 +261,8 @@ packages/
   ui/src/index.ts                   🔄 Scaffolded, empty
   types/src/
     database.ts                     ✅ Placeholder Database type (replace with generated output)
-    index.ts                        ✅ Exports Database, Json
+    users.ts                        ✅ Zod schemas + inferred types — users, user_settings, enums
+    index.ts                        ✅ Exports Database, Json, all user schemas and types
   utils/src/
     result.ts                       ✅ Result<T,E>, ok(), err(), fromSupabase(), fromSupabaseMaybe()
     index.ts                        ✅ Exports result helpers
@@ -409,10 +422,11 @@ scripts/
   seed-requirements.mjs           ✅ Seeds 15 initial requirements from LinkedIn research
 
 supabase/migrations/
-  20260401000000_initial_schema.sql   ✅ Tables, enums, indexes
-  20260401000001_rls_policies.sql     ✅ Row-level security
-  20260401000002_functions_triggers.sql ✅ Triggers + find_similar_requirements()
-  20260402000000_m5_schema.sql        ✅ M5 — merged_into, is_flagged, flag_reason, updated_at, persona_subscriptions
+  001_users_and_auth.sql              ✅ Platform — users + user_settings tables, indexes, triggers, RLS, signup trigger
+  20260401000000_initial_schema.sql   ✅ Requirements site — Tables, enums, indexes
+  20260401000001_rls_policies.sql     ✅ Requirements site — Row-level security
+  20260401000002_functions_triggers.sql ✅ Requirements site — Triggers + find_similar_requirements()
+  20260402000000_m5_schema.sql        ✅ Requirements site — M5 — merged_into, is_flagged, flag_reason, updated_at, persona_subscriptions
 ```
 
 ---
