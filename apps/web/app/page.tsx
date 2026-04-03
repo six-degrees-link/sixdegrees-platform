@@ -4,5 +4,5 @@ export default function Home() {
       <h1>SixDegrees</h1>
       <p>Coming soon.</p>
     </main>
-  )
+  );
 }
