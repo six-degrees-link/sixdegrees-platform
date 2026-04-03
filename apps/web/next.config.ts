@@ -1,11 +1,7 @@
-import type { NextConfig } from 'next'
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  transpilePackages: [
-    '@sixdegrees/ui',
-    '@sixdegrees/types',
-    '@sixdegrees/utils',
-  ],
-}
+  transpilePackages: ['@sixdegrees/ui', '@sixdegrees/types', '@sixdegrees/utils'],
+};
 
-export default nextConfig
+export default nextConfig;

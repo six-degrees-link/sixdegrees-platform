@@ -1,6 +1,6 @@
 # SixDegrees — Build Progress
 
-**Last updated**: 2026-04-03 (Supabase connection + build fix)
+**Last updated**: 2026-04-03 (ESLint + Prettier + Husky)
 **Current phase**: Platform Build — Phase 1, Cycle 1 (in progress)
 **Requirements site**: https://sixdegrees.link (live, M5 complete)
 **Platform repo**: https://github.com/six-degrees-link/sixdegrees-platform
@@ -70,8 +70,16 @@
 - `packages/utils/src/result.ts` — `Result<T,E>`, `ok()`, `err()`, `fromSupabase()`, `fromSupabaseMaybe()`
 - `.env.local.example` — all three Supabase env vars (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`)
 
+**Code quality tooling**
+- `eslint.config.js` — ESLint v9 flat config; extends `eslint-config-next` + `@typescript-eslint/recommended` + `prettier`
+- Rules enforced: `no-unused-vars` error, `no-explicit-any` error, `consistent-type-imports` error, `react-hooks/rules-of-hooks` error
+- `.prettierrc` — `singleQuote`, `semi`, `trailingComma: all`, `printWidth: 100`, `tabWidth: 2`
+- `.editorconfig` — UTF-8, LF line endings, 2-space indent, final newline
+- `.husky/pre-commit` — runs `lint-staged` on every commit
+- `lint-staged` — ESLint `--fix` then Prettier on staged `.ts`/`.tsx` files
+- Root scripts: `lint`, `lint:fix`, `format`, `format:check`
+
 **Pending (P1-C1)**
-- ESLint + Husky pre-commit hooks
 - CI/CD via GitHub Actions
 - Core DB schema — users, auth, profiles, credentials
 - Supabase Auth (magic link + OAuth)
@@ -230,8 +238,12 @@ packages/
   utils/src/
     result.ts                       ✅ Result<T,E>, ok(), err(), fromSupabase(), fromSupabaseMaybe()
     index.ts                        ✅ Exports result helpers
-turbo.json                          ✅ Task graph — build, dev, lint, test, type-check
-vercel.json                         ✅ outputDirectory + local turbo binary
+eslint.config.js                      ✅ ESLint v9 flat config — Next.js + TypeScript strict + Prettier compat
+.prettierrc                           ✅ Prettier config — singleQuote, semi, trailingComma all, printWidth 100
+.editorconfig                         ✅ Editor-agnostic: UTF-8, LF, 2-space indent, final newline
+.husky/pre-commit                     ✅ Runs lint-staged on every commit
+turbo.json                            ✅ Task graph — build, dev, lint, test, type-check
+vercel.json                           ✅ outputDirectory + local turbo binary
 ```
 
 ---
