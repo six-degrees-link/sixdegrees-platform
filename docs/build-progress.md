@@ -1,6 +1,6 @@
 # SixDegrees — Build Progress
 
-**Last updated**: 2026-04-03 (P1-C1 complete)
+**Last updated**: 2026-04-03 (Vercel deployment config + health check)
 **Current phase**: Platform Build — Phase 1, Cycle 1 (in progress)
 **Requirements site**: https://sixdegrees.link (live, M5 complete)
 **Platform repo**: https://github.com/six-degrees-link/sixdegrees-platform
@@ -82,6 +82,12 @@
 ---
 
 ### P1-C2 — Foundation Hardening (in progress)
+
+**Vercel deployment config**
+- `vercel.json` — security headers at CDN layer: `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: origin-when-cross-origin`, `Permissions-Policy` (camera/mic/geolocation disabled)
+- `next.config.ts` — same headers applied at Next.js server layer (defense in depth)
+- `app/api/health/route.ts` — `GET /api/health` returns `{ status, timestamp, version }`
+- `.env.production.example` — all required env vars documented (Supabase, app URL, Resend, Anthropic, admin emails)
 
 **Pending**
 - CI/CD via GitHub Actions
@@ -230,10 +236,15 @@ apps/
         client.ts                   ✅ createClient() — browser (Client Components)
         server.ts                   ✅ createClient() — SSR + createServiceClient() — service role
         middleware.ts               ✅ createMiddlewareClient() — cookie wiring for proxy.ts
+    app/
+      api/
+        health/route.ts             ✅ GET /api/health — status, timestamp, version
     proxy.ts                        ✅ Next.js 16 session refresh interceptor (runs on every request)
     tailwind.config.ts              ✅ Tailwind v4 config (content paths only, tokens in CSS)
+    next.config.ts                  ✅ transpilePackages + security headers (server layer)
     package.json                    ✅ Next.js 16, tailwindcss v4, @supabase/ssr, @sixdegrees/* deps
     .env.local.example              ✅ Supabase env var template
+    .env.production.example         ✅ All production env vars documented with comments
 packages/
   ui/src/index.ts                   🔄 Scaffolded, empty
   types/src/
@@ -247,7 +258,7 @@ eslint.config.js                      ✅ ESLint v9 flat config — Next.js + Ty
 .editorconfig                         ✅ Editor-agnostic: UTF-8, LF, 2-space indent, final newline
 .husky/pre-commit                     ✅ Runs lint-staged on every commit
 turbo.json                            ✅ Task graph — build, dev, lint, test, type-check
-vercel.json                           ✅ outputDirectory + local turbo binary
+vercel.json                           ✅ outputDirectory, npx turbo build, security headers (CDN layer)
 ```
 
 ---
