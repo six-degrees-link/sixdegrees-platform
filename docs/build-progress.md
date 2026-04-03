@@ -1,6 +1,6 @@
 # SixDegrees — Build Progress
 
-**Last updated**: 2026-04-03 (ESLint + Prettier + Husky)
+**Last updated**: 2026-04-03 (P1-C1 complete)
 **Current phase**: Platform Build — Phase 1, Cycle 1 (in progress)
 **Requirements site**: https://sixdegrees.link (live, M5 complete)
 **Platform repo**: https://github.com/six-degrees-link/sixdegrees-platform
@@ -11,8 +11,8 @@
 
 | Phase | Name | Target | Status |
 |-------|------|--------|--------|
-| P1-C1 | Project Setup | Apr 18 | 🔄 In Progress |
-| P1-C2 | Foundation Hardening | May 2 | ⏳ Upcoming |
+| P1-C1 | Project Setup | Apr 18 | ✅ Complete |
+| P1-C2 | Foundation Hardening | May 2 | 🔄 In Progress |
 | P2 | Identity and Profiles | May 30 | ⏳ Upcoming |
 | P3 | Networking and Communication | Jul 25 | ⏳ Upcoming |
 | P4 | Content and Discovery | Sep 19 | ⏳ Upcoming |
@@ -35,7 +35,7 @@
 
 ## Platform Build — What's Built
 
-### P1-C1 — Project Setup (in progress)
+### P1-C1 — Project Setup ✅
 
 **Monorepo scaffold**
 - Turborepo monorepo at `sixdegrees-platform`
@@ -79,7 +79,11 @@
 - `lint-staged` — ESLint `--fix` then Prettier on staged `.ts`/`.tsx` files
 - Root scripts: `lint`, `lint:fix`, `format`, `format:check`
 
-**Pending (P1-C1)**
+---
+
+### P1-C2 — Foundation Hardening (in progress)
+
+**Pending**
 - CI/CD via GitHub Actions
 - Core DB schema — users, auth, profiles, credentials
 - Supabase Auth (magic link + OAuth)
