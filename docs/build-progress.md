@@ -1,6 +1,6 @@
 # SixDegrees — Build Progress
 
-**Last updated**: 2026-04-03
+**Last updated**: 2026-04-03 (Supabase connection + build fix)
 **Current phase**: Platform Build — Phase 1, Cycle 1 (in progress)
 **Requirements site**: https://sixdegrees.link (live, M5 complete)
 **Platform repo**: https://github.com/six-degrees-link/sixdegrees-platform
@@ -60,14 +60,37 @@
 - `vercel.json` — `outputDirectory: apps/web/.next`, uses local `./node_modules/.bin/turbo`
 - `postcss.config.js` (CJS) — `@tailwindcss/postcss` plugin
 
+**Supabase connection**
+- `@supabase/supabase-js` + `@supabase/ssr` installed in `apps/web`
+- `lib/supabase/client.ts` — `createClient()` for Client Components (`createBrowserClient`)
+- `lib/supabase/server.ts` — `createClient()` async SSR client + `createServiceClient()` sync service-role client (bypasses RLS, no session persistence)
+- `lib/supabase/middleware.ts` — `createMiddlewareClient()` helper wiring cookies to both request and response
+- `proxy.ts` — Next.js 16 session refresh interceptor; exports `proxy` (not `middleware`) — Next.js 16 requires the function name to match the filename
+- `packages/types/src/database.ts` — placeholder `Database` type (replace with `supabase gen types typescript` output once schema is applied)
+- `packages/utils/src/result.ts` — `Result<T,E>`, `ok()`, `err()`, `fromSupabase()`, `fromSupabaseMaybe()`
+- `.env.local.example` — all three Supabase env vars (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`)
+
 **Pending (P1-C1)**
-- Supabase project setup and connection
 - ESLint + Husky pre-commit hooks
 - CI/CD via GitHub Actions
 - Core DB schema — users, auth, profiles, credentials
 - Supabase Auth (magic link + OAuth)
 - Zod validation schemas in `packages/types`
 - Navigation shell and layout system
+
+---
+
+## Platform Build — Architecture Decisions & Lessons Learned
+
+### proxy.ts — exported function must be named `proxy`
+
+Next.js 16 renames `middleware.ts` to `proxy.ts`. The exported function must also be renamed from `middleware` to `proxy` — the runtime requires the name to match the file. Turbopack build fails with "Proxy is missing expected function export name" if the old name is kept.
+
+```ts
+// proxy.ts
+export async function proxy(request: NextRequest) { ... }  // correct
+export async function middleware(request: NextRequest) { ... }  // breaks build
+```
 
 ---
 
@@ -187,17 +210,28 @@ Categories covered: jobs, verification, content, messaging, analytics, microsite
 apps/
   web/
     app/
-      layout.tsx            ✅ Root layout — Inter Variable, globals.css
-      page.tsx              🔄 Placeholder "Coming soon"
-      globals.css           ✅ Tailwind v4 @theme tokens + dark mode surface tokens
-    tailwind.config.ts      ✅ Tailwind v4 config (content paths only, tokens in CSS)
-    package.json            ✅ Next.js 16, tailwindcss v4, @sixdegrees/* workspace deps
+      layout.tsx                    ✅ Root layout — Inter Variable, globals.css
+      page.tsx                      🔄 Placeholder "Coming soon"
+      globals.css                   ✅ Tailwind v4 @theme tokens + dark mode surface tokens
+    lib/
+      supabase/
+        client.ts                   ✅ createClient() — browser (Client Components)
+        server.ts                   ✅ createClient() — SSR + createServiceClient() — service role
+        middleware.ts               ✅ createMiddlewareClient() — cookie wiring for proxy.ts
+    proxy.ts                        ✅ Next.js 16 session refresh interceptor (runs on every request)
+    tailwind.config.ts              ✅ Tailwind v4 config (content paths only, tokens in CSS)
+    package.json                    ✅ Next.js 16, tailwindcss v4, @supabase/ssr, @sixdegrees/* deps
+    .env.local.example              ✅ Supabase env var template
 packages/
-  ui/src/index.ts           🔄 Scaffolded, empty
-  types/src/index.ts        🔄 Scaffolded, empty
-  utils/src/index.ts        🔄 Scaffolded, empty
-turbo.json                  ✅ Task graph — build, dev, lint, test, type-check
-vercel.json                 ✅ outputDirectory + local turbo binary
+  ui/src/index.ts                   🔄 Scaffolded, empty
+  types/src/
+    database.ts                     ✅ Placeholder Database type (replace with generated output)
+    index.ts                        ✅ Exports Database, Json
+  utils/src/
+    result.ts                       ✅ Result<T,E>, ok(), err(), fromSupabase(), fromSupabaseMaybe()
+    index.ts                        ✅ Exports result helpers
+turbo.json                          ✅ Task graph — build, dev, lint, test, type-check
+vercel.json                         ✅ outputDirectory + local turbo binary
 ```
 
 ---
