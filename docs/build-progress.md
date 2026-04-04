@@ -89,11 +89,18 @@
 - `app/api/health/route.ts` — `GET /api/health` returns `{ status, timestamp, version }`
 - `.env.production.example` — all required env vars documented (Supabase, app URL, Resend, Anthropic, admin emails)
 
+**CI/CD pipeline** (SIX-52)
+- `.github/workflows/ci.yml` — runs on push to main and all PRs targeting main
+- Concurrency group cancels in-progress runs for the same ref
+- Steps: checkout, setup Node 20 with npm cache, `npm ci`, lint, type-check, build
+- Placeholder Supabase env vars for build step (Next.js requires `NEXT_PUBLIC_*` at build time)
+- Turbo Remote Cache support via `TURBO_TOKEN`/`TURBO_TEAM` (optional, uses GitHub secrets/vars)
+- 10 minute timeout
+- Skipped `preview.yml` — Vercel GitHub integration already auto-comments preview URLs on PRs
+- Test step deferred — no test runner installed yet
+
 **Pending**
-- CI/CD via GitHub Actions
-- Core DB schema — users, auth, profiles, credentials
 - Supabase Auth (magic link + OAuth)
-- Zod validation schemas in `packages/types`
 - Navigation shell and layout system
 
 ---
@@ -259,6 +266,8 @@ eslint.config.js                      ✅ ESLint v9 flat config — Next.js + Ty
 .husky/pre-commit                     ✅ Runs lint-staged on every commit
 turbo.json                            ✅ Task graph — build, dev, lint, test, type-check
 vercel.json                           ✅ outputDirectory, npx turbo build, security headers (CDN layer)
+.github/workflows/
+  ci.yml                              ✅ CI — lint, type-check, build on push to main + PRs
 ```
 
 ---

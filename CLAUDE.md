@@ -149,6 +149,10 @@ EMAIL_FROM=noreply@sixdegrees.link
 
 See `apps/web/.env.production.example` for full documentation.
 
+## GitHub Pull Requests
+
+When creating PR descriptions or comments, do not use `#` headings — GitHub renders them as large headers, not bullet points. Use **bold text** or `- ` bullet lists for structure instead.
+
 ## Vercel Deployment
 
 - `vercel.json` — build command: `npx turbo run build --filter=@sixdegrees/web`, output: `apps/web/.next`
