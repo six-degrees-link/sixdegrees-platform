@@ -12,7 +12,7 @@ All standard commands (`dev`, `build`, `lint`, `type-check`, `format`) are in th
 
 ### Environment variables
 
-Copy `apps/web/.env.local.example` to `apps/web/.env.local` before running the dev server. The example file contains working Supabase development credentials. Do **not** commit `.env.local`.
+Copy `apps/web/.env.local.example` to `apps/web/.env.local` before running the dev server. Replace the placeholder values (`<your-anon-key>`, `<your-service-role-key>`, `<project-ref>`) with your own Supabase development credentials. Do **not** commit `.env.local`.
 
 ### Dev server
 
