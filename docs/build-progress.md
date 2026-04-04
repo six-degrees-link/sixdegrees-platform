@@ -1,7 +1,7 @@
 # SixDegrees — Build Progress
 
-**Last updated**: 2026-04-03 (Vercel deployment config + health check)
-**Current phase**: Platform Build — Phase 1, Cycle 1 (in progress)
+**Last updated**: 2026-04-04 (profiles/credentials schema, CI pipeline, security fix)
+**Current phase**: Platform Build — Phase 1, Cycle 2 (in progress)
 **Requirements site**: https://sixdegrees.link (live, M5 complete)
 **Platform repo**: https://github.com/six-degrees-link/sixdegrees-platform
 
@@ -89,11 +89,40 @@
 - `app/api/health/route.ts` — `GET /api/health` returns `{ status, timestamp, version }`
 - `.env.production.example` — all required env vars documented (Supabase, app URL, Resend, Anthropic, admin emails)
 
+**CI/CD pipeline** (SIX-52)
+- `.github/workflows/ci.yml` — runs on push to main and all PRs targeting main
+- Concurrency group cancels in-progress runs for the same ref
+- Steps: checkout, setup Node 20 with npm cache, `npm ci`, lint, type-check, build
+- Placeholder Supabase env vars for build step (Next.js requires `NEXT_PUBLIC_*` at build time)
+- Turbo Remote Cache support via `TURBO_TOKEN`/`TURBO_TEAM` (optional)
+- Test step deferred — no test runner installed yet
+
+**Core DB schema — Users and Auth** (SIX-53)
+- `supabase/migrations/001_users_and_auth.sql` — applied to Supabase
+- `public.users` table — 19 columns with 7 CHECK constraints, 7 indexes (including GIN for full-text search)
+- `public.user_settings` table — 7 columns with 2 CHECK constraints
+- 4 triggers: `set_updated_at` (both tables), `users_search_vector_update` (tsvector via trigger), `handle_new_user` (SECURITY DEFINER on auth.users)
+- 6 RLS policies + INSERT policies for signup flow
+- Zod schemas in `packages/types/src/users.ts` — 5 enum schemas, 5 table schemas
+
+**DB schema — Profiles and Credentials** (SIX-54)
+- `supabase/migrations/002_profiles_and_credentials.sql` — applied to Supabase
+- `work_experience` — 15 columns, employment_type enum, date order constraint, sort_order
+- `education` — 11 columns, date order constraint
+- `skills` — reference table with trigram GIN index for fuzzy search, category enum (5 values)
+- `user_skills` — composite PK (user_id, skill_id), endorsement_count
+- `skill_endorsements` — FK to user_skills, no-self-endorse constraint
+- `certifications` — 11 columns, date order constraint, credential URL
+- 9 indexes, 3 updated_at triggers, 22 RLS policies
+- Enables `pg_trgm` extension for fuzzy skill name search
+- Zod schemas in `packages/types/src/profiles.ts` — 2 enum schemas, 6 table schemas
+
+**Security fix**
+- `.env.local.example` contained real Supabase keys — replaced with placeholders
+- JWT secret rotated to invalidate leaked keys
+
 **Pending**
-- CI/CD via GitHub Actions
-- Core DB schema — users, auth, profiles, credentials
 - Supabase Auth (magic link + OAuth)
-- Zod validation schemas in `packages/types`
 - Navigation shell and layout system
 
 ---
@@ -249,7 +278,9 @@ packages/
   ui/src/index.ts                   🔄 Scaffolded, empty
   types/src/
     database.ts                     ✅ Placeholder Database type (replace with generated output)
-    index.ts                        ✅ Exports Database, Json
+    users.ts                        ✅ Zod schemas + inferred types — users, user_settings, enums
+    profiles.ts                     ✅ Zod schemas + inferred types — work_experience, education, skills, certifications
+    index.ts                        ✅ Exports all schemas and types
   utils/src/
     result.ts                       ✅ Result<T,E>, ok(), err(), fromSupabase(), fromSupabaseMaybe()
     index.ts                        ✅ Exports result helpers
@@ -259,6 +290,11 @@ eslint.config.js                      ✅ ESLint v9 flat config — Next.js + Ty
 .husky/pre-commit                     ✅ Runs lint-staged on every commit
 turbo.json                            ✅ Task graph — build, dev, lint, test, type-check
 vercel.json                           ✅ outputDirectory, npx turbo build, security headers (CDN layer)
+.github/workflows/
+  ci.yml                              ✅ CI — lint, type-check, build on push to main + PRs
+supabase/migrations/
+  001_users_and_auth.sql              ✅ Platform — users + user_settings, triggers, RLS, signup trigger
+  002_profiles_and_credentials.sql    ✅ Platform — work_experience, education, skills, user_skills, skill_endorsements, certifications
 ```
 
 ---
