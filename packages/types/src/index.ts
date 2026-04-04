@@ -26,3 +26,37 @@ export type {
   UserSettings,
   UserSettingsUpdate,
 } from './users';
+
+export {
+  employmentTypeSchema,
+  skillCategorySchema,
+  workExperienceSchema,
+  workExperienceInsertSchema,
+  workExperienceUpdateSchema,
+  educationSchema,
+  educationInsertSchema,
+  educationUpdateSchema,
+  skillSchema,
+  userSkillSchema,
+  skillEndorsementSchema,
+  certificationSchema,
+  certificationInsertSchema,
+  certificationUpdateSchema,
+} from './profiles';
+
+export type {
+  EmploymentType,
+  SkillCategory,
+  WorkExperience,
+  WorkExperienceInsert,
+  WorkExperienceUpdate,
+  Education,
+  EducationInsert,
+  EducationUpdate,
+  Skill,
+  UserSkill,
+  SkillEndorsement,
+  Certification,
+  CertificationInsert,
+  CertificationUpdate,
+} from './profiles';
