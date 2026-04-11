@@ -16,15 +16,15 @@
     "@supabase/ssr": "^0.10.0",
     "@supabase/supabase-js": "^2.101.1",
     "@tailwindcss/postcss": "^4.2.2",
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest",
+    "next": "^16.2.3",
+    "react": "*",
+    "react-dom": "*",
     "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
-    "@types/node": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
+    "@types/node": "*",
+    "@types/react": "*",
+    "@types/react-dom": "*",
     "typescript": "^5.0.0"
   }
 }
